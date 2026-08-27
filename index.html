@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartPick - Find Your Perfect Smartphone & Compare Prices</title>
+  <meta name="description" content="Find your dream smartphone based on your budget, gaming, camera, and battery requirements. Compare live prices across Amazon, Best Buy, Walmart, and more." />
+  <meta name="keywords" content="smartphone finder, compare smartphones, phone price comparison, best camera phone, best gaming phone" />
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="SmartPick - Smartphone Finder & Comparator" />
+  <meta property="og:description" content="AI-assisted smartphone finder quiz and side-by-side spec comparator with multi-store price tracker." />
+  <meta property="og:type" content="website" />
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/dark-light.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body data-page="home">
+
+  <!-- Deal of the Day Banner -->
+  <div class="deal-banner">
+    <div class="container deal-banner-content">
+      <span class="deal-badge">🔥 Mega Tech Deals</span>
+      <span>Save up to $150 on Samsung Galaxy S24 Ultra & iPhone 15 Pro Max today!</span>
+      <a href="phones.html?category=budget" style="color:#fff; text-decoration:underline; font-weight:700;">Explore Deals →</a>
+    </div>
+  </div>
+
+  <!-- Main Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand" aria-label="SmartPick Home">
+        <div class="brand-icon">⚡</div>
+        <span>Smart<span class="gradient-text">Pick</span></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link active">Home</a></li>
+        <li><a href="finder.html" class="nav-link">🔍 Smart Finder</a></li>
+        <li><a href="phones.html" class="nav-link">📱 All Phones</a></li>
+        <li><a href="compare.html" class="nav-link">⚖️ Compare</a></li>
+        <li><a href="top-picks.html" class="nav-link">🏆 Top Picks</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Currency Converter Selector -->
+        <select class="currency-select" aria-label="Select Currency">
+          <option value="USD">USD ($)</option>
+          <option value="EUR">EUR (€)</option>
+          <option value="GBP">GBP (£)</option>
+          <option value="INR">INR (₹)</option>
+        </select>
+
+        <!-- Wishlist Nav Icon -->
+        <a href="wishlist.html" class="nav-icon-btn" title="Saved Wishlist" aria-label="Wishlist">
+          <span>❤️</span>
+          <span class="nav-badge nav-wishlist-badge" style="display:none;">0</span>
+        </a>
+
+        <!-- Compare Nav Icon -->
+        <a href="compare.html" class="nav-icon-btn" title="Comparison List" aria-label="Compare">
+          <span>⚖️</span>
+          <span class="nav-badge nav-compare-badge" style="display:none;">0</span>
+        </a>
+
+        <!-- Theme Mode Toggle -->
+        <button class="nav-icon-btn theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
+          ☀️
+        </button>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="menu-toggle" aria-label="Open Navigation Menu">
+          ☰
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <!-- ── Hero Banner Section ──────────────────────────────── -->
+    <section class="section hero-section" style="padding-top: 40px; padding-bottom: 60px;">
+      <div class="container">
+        <div class="hero-grid" style="display:grid; grid-template-columns: 1.2fr 0.8fr; gap: 48px; align-items:center;">
+          <div class="hero-text-side">
+            <span class="section-badge">✨ Next-Gen Phone Discovery</span>
+            <h1>Find Your <span class="gradient-text">Perfect Smartphone</span> in Seconds.</h1>
+            <p class="section-subtitle" style="font-size:1.15rem; margin-top:16px; margin-bottom:28px;">
+              Stop wasting hours researching specs. Take our 60-second Smart Finder Quiz, compare real-time multi-store prices, and get tailored recommendations tailored to your exact budget.
+            </p>
+
+            <div class="hero-cta-group flex gap-4" style="flex-wrap:wrap; margin-bottom:32px;">
+              <a href="finder.html" class="btn btn-primary btn-lg">
+                <span>Start Finding Quiz</span>
+                <span>→</span>
+              </a>
+              <a href="compare.html" class="btn btn-secondary btn-lg">
+                <span>Compare Phones</span>
+                <span>⚖️</span>
+              </a>
+            </div>
+
+            <!-- Trust Badges -->
+            <div style="display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+              <div style="display:flex; align-items:center; gap:6px; font-size:0.88rem; color:var(--text-secondary);">
+                <span style="color:var(--success);">✓</span> 30+ Flagships & Mid-Rangers
+              </div>
+              <div style="display:flex; align-items:center; gap:6px; font-size:0.88rem; color:var(--text-secondary);">
+                <span style="color:var(--success);">✓</span> Real-Time Store Comparison
+              </div>
+              <div style="display:flex; align-items:center; gap:6px; font-size:0.88rem; color:var(--text-secondary);">
+                <span style="color:var(--success);">✓</span> Unbiased Spec Benchmark
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Graphic Floating Mockup -->
+          <div style="position:relative; display:flex; justify-content:center;">
+            <div class="hero-mockup-wrapper animate-float" style="position:relative; z-index:2; max-width:380px; width:100%;">
+              <div style="background:var(--bg-glass); border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:24px; box-shadow:var(--shadow-xl), var(--shadow-glow);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                  <span class="badge badge-winner">👑 #1 Smartphone</span>
+                  <span style="font-weight:700; color:var(--success);">98% Match</span>
+                </div>
+                <img src="https://picsum.photos/seed/galaxys24ultra/400/350" alt="Samsung Galaxy S24 Ultra" style="border-radius:12px; margin-bottom:16px; width:100%; height:220px; object-fit:contain;" />
+                <h3 style="font-size:1.3rem;">Galaxy S24 Ultra</h3>
+                <p style="font-size:0.85rem; margin-bottom:12px;">Snapdragon 8 Gen 3 • 200MP Quad Cam • S Pen</p>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span class="current-price">$1,299</span>
+                  <a href="phone-detail.html?id=galaxy-s24-ultra" class="btn btn-primary btn-sm">Inspect Specs</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Quick Search Section ─────────────────────────────── -->
+    <section class="section" style="padding: 20px 0 60px;">
+      <div class="container container-narrow">
+        <div class="search-wrapper">
+          <div class="search-input-box" style="padding: 8px 12px 8px 24px;">
+            <span style="font-size:1.3rem; color:var(--text-muted);">🔍</span>
+            <input type="text" id="heroSearchInput" placeholder="Search by phone name, brand (e.g. Apple, Samsung, Pixel), or chipset..." aria-label="Search smartphones" autocomplete="off" />
+            <div class="search-btn-group">
+              <button class="voice-search-btn" id="heroVoiceBtn" title="Voice Search" aria-label="Voice Search">
+                🎙️
+              </button>
+              <button class="btn btn-primary" onclick="const q = document.getElementById('heroSearchInput').value; if(q) window.location.href='phones.html?q='+encodeURIComponent(q);">
+                Search
+              </button>
+            </div>
+          </div>
+          <div id="heroAutocomplete" class="autocomplete-dropdown"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Top Categories Icons Grid ────────────────────────── -->
+    <section class="section" style="padding-top: 0;">
+      <div class="container">
+        <div class="section-title-wrap">
+          <div>
+            <span class="section-badge">🎯 Browse By Lifestyle</span>
+            <h2>Explore Top Categories</h2>
+          </div>
+          <a href="phones.html" class="btn btn-outline btn-sm">View All Categories →</a>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:16px;">
+          <div class="quiz-option-card category-chip" data-category="camera">
+            <span class="quiz-option-icon">📸</span>
+            <div class="quiz-option-title">Photography</div>
+            <div class="quiz-option-desc">Best 50MP+ OIS Sensors</div>
+          </div>
+          <div class="quiz-option-card category-chip" data-category="gaming">
+            <span class="quiz-option-icon">🎮</span>
+            <div class="quiz-option-title">Gaming</div>
+            <div class="quiz-option-desc">144Hz+ & Snapdragon 8</div>
+          </div>
+          <div class="quiz-option-card category-chip" data-category="budget">
+            <span class="quiz-option-icon">💰</span>
+            <div class="quiz-option-title">Budget Value</div>
+            <div class="quiz-option-desc">Top picks under $400</div>
+          </div>
+          <div class="quiz-option-card category-chip" data-category="battery">
+            <span class="quiz-option-icon">🔋</span>
+            <div class="quiz-option-title">Battery Beasts</div>
+            <div class="quiz-option-desc">5000mAh+ & 100W Charge</div>
+          </div>
+          <div class="quiz-option-card category-chip" data-category="5g">
+            <span class="quiz-option-icon">📶</span>
+            <div class="quiz-option-title">5G Flagships</div>
+            <div class="quiz-option-desc">Ultrafast Connectivity</div>
+          </div>
+          <div class="quiz-option-card category-chip" data-category="productivity">
+            <span class="quiz-option-icon">💼</span>
+            <div class="quiz-option-title">Foldables & Pro</div>
+            <div class="quiz-option-desc">Multitasking & Stylus</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Featured Popular Phones ─────────────────────────── -->
+    <section class="section" style="background:var(--bg-secondary); border-top:1px solid var(--border-color); border-bottom:1px solid var(--border-color);">
+      <div class="container">
+        <div class="section-title-wrap">
+          <div>
+            <span class="section-badge">🔥 Most Popular Right Now</span>
+            <h2>Trending Smartphones</h2>
+            <p class="section-subtitle">Highly rated by users and tech reviewers across the globe.</p>
+          </div>
+          <a href="phones.html?sort=popular" class="btn btn-outline btn-sm">See Full Catalog →</a>
+        </div>
+
+        <div id="featuredPhonesContainer" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:24px;">
+          <!-- Dynamically filled via js/app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ── How SmartPick Works (3 Steps) ────────────────────── -->
+    <section class="section">
+      <div class="container">
+        <div class="section-title-wrap text-center" style="justify-content:center; margin-bottom:48px;">
+          <div>
+            <span class="section-badge">⚡ Easy 3-Step Process</span>
+            <h2>How SmartPick Works</h2>
+            <p class="section-subtitle" style="margin:8px auto 0;">We take the guesswork out of purchasing your next phone.</p>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:32px;">
+          <!-- Step 1 -->
+          <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:32px 24px; text-align:center;">
+            <div style="width:60px; height:60px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-size:1.8rem; font-weight:800; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">1</div>
+            <h3>Share Your Needs</h3>
+            <p style="margin-top:10px; font-size:0.92rem;">Tell us your target budget, must-have features, brand preference, and gaming/camera priorities.</p>
+          </div>
+
+          <!-- Step 2 -->
+          <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:32px 24px; text-align:center;">
+            <div style="width:60px; height:60px; border-radius:50%; background:var(--secondary-light); color:var(--secondary); font-size:1.8rem; font-weight:800; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">2</div>
+            <h3>Compare & Score</h3>
+            <p style="margin-top:10px; font-size:0.92rem;">Our match algorithm analyzes 30+ spec metrics side-by-side with clear winner indicators and scores.</p>
+          </div>
+
+          <!-- Step 3 -->
+          <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:32px 24px; text-align:center;">
+            <div style="width:60px; height:60px; border-radius:50%; background:rgba(0, 255, 136, 0.12); color:var(--success); font-size:1.8rem; font-weight:800; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">3</div>
+            <h3>Grab Best Deal</h3>
+            <p style="margin-top:10px; font-size:0.92rem;">Track historical price drops and purchase from the verified lowest-price store (Amazon, Best Buy, etc.).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Editor's Choice Picks ───────────────────────────── -->
+    <section class="section" style="background:var(--bg-secondary); border-top:1px solid var(--border-color);">
+      <div class="container">
+        <div class="section-title-wrap">
+          <div>
+            <span class="section-badge">⭐ Certified Excellence</span>
+            <h2>Editor's Choice Awards</h2>
+            <p class="section-subtitle">Hand-picked by our hardware specialists for maximum performance per dollar.</p>
+          </div>
+          <a href="top-picks.html" class="btn btn-outline btn-sm">View Top Picks →</a>
+        </div>
+
+        <div id="editorPhonesContainer" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:24px;">
+          <!-- Dynamically filled via js/app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Price Alert CTA Banner ──────────────────────────── -->
+    <section class="section" style="padding: 60px 0;">
+      <div class="container">
+        <div style="background:var(--primary-gradient); border-radius:var(--radius-lg); padding:48px 36px; color:#fff; text-align:center; box-shadow:var(--shadow-xl), var(--shadow-glow);">
+          <h2 style="color:#fff; font-size:clamp(1.8rem, 4vw, 2.5rem); margin-bottom:14px;">Ready to Discover Your Next Smartphone?</h2>
+          <p style="color:rgba(255,255,255,0.9); max-width:600px; margin:0 auto 28px; font-size:1.05rem;">
+            Answer a few quick questions in our interactive finder wizard and get ranked matches instantly.
+          </p>
+          <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+            <a href="finder.html" class="btn btn-secondary btn-lg" style="background:#fff; color:#0f0f13; font-weight:800;">
+              Launch Smart Finder Quiz 🚀
+            </a>
+            <a href="phones.html" class="btn btn-outline btn-lg" style="border-color:#fff; color:#fff;">
+              Browse 30+ Phones 📱
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Footer ────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="nav-brand">
+            <div class="brand-icon">⚡</div>
+            <span>Smart<span class="gradient-text">Pick</span></span>
+          </a>
+          <p>The premier smartphone finder, spec benchmark, and multi-store price comparator engineered for modern buyers.</p>
+          <div style="margin-top:16px;">
+            <span class="last-updated">
+              <span class="pulse-dot"></span> Price database updated today
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Features</h4>
+          <ul class="footer-links">
+            <li><a href="finder.html">Smart Finder Quiz</a></li>
+            <li><a href="compare.html">Phone Comparator</a></li>
+            <li><a href="top-picks.html">Top Picks 2024</a></li>
+            <li><a href="phones.html">Full Phone Catalog</a></li>
+            <li><a href="wishlist.html">Saved Wishlist</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Categories</h4>
+          <ul class="footer-links">
+            <li><a href="phones.html?category=camera">Best Camera Phones</a></li>
+            <li><a href="phones.html?category=gaming">Best Gaming Phones</a></li>
+            <li><a href="phones.html?category=budget">Budget Under $400</a></li>
+            <li><a href="phones.html?brand=Apple">Apple iPhones</a></li>
+            <li><a href="phones.html?brand=Samsung">Samsung Galaxy</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Stores Tracked</h4>
+          <ul class="footer-links">
+            <li><a href="phones.html">Amazon Store</a></li>
+            <li><a href="phones.html">Best Buy</a></li>
+            <li><a href="phones.html">Walmart</a></li>
+            <li><a href="phones.html">Official Brand Stores</a></li>
+            <li><a href="phones.html">Flipkart India</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">About SmartPick</h4>
+          <p style="font-size:0.88rem; margin-bottom:14px;">Built with high-performance Vanilla HTML5, CSS3 & JavaScript for instantaneous responsiveness.</p>
+          <div class="footer-social">
+            <a href="https://github.com/WARRIORXR" target="_blank" rel="noopener" class="social-link" title="GitHub" aria-label="GitHub">🐙</a>
+            <a href="#" class="social-link" title="Twitter" aria-label="Twitter">🐦</a>
+            <a href="#" class="social-link" title="YouTube" aria-label="YouTube">▶️</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 SmartPick Inc. All rights reserved. Designed for smartphone lovers.</div>
+        <div style="display:flex; gap:16px;">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Settings</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data/phones.js"></script>
+  <script src="js/wishlist.js"></script>
+  <script src="js/compare.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/priceChart.js"></script>
+  <script src="js/finder.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

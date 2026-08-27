@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Requirement Finder Quiz | SmartPick</title>
+  <meta name="description" content="Take our 6-step interactive smartphone wizard to discover your ideal phone based on your exact budget, camera, gaming, and battery requirements." />
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/dark-light.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body data-page="finder">
+
+  <!-- Main Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand" aria-label="SmartPick Home">
+        <div class="brand-icon">⚡</div>
+        <span>Smart<span class="gradient-text">Pick</span></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="finder.html" class="nav-link active">🔍 Smart Finder</a></li>
+        <li><a href="phones.html" class="nav-link">📱 All Phones</a></li>
+        <li><a href="compare.html" class="nav-link">⚖️ Compare</a></li>
+        <li><a href="top-picks.html" class="nav-link">🏆 Top Picks</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <select class="currency-select" aria-label="Select Currency">
+          <option value="USD">USD ($)</option>
+          <option value="EUR">EUR (€)</option>
+          <option value="GBP">GBP (£)</option>
+          <option value="INR">INR (₹)</option>
+        </select>
+
+        <a href="wishlist.html" class="nav-icon-btn" title="Saved Wishlist" aria-label="Wishlist">
+          <span>❤️</span>
+          <span class="nav-badge nav-wishlist-badge" style="display:none;">0</span>
+        </a>
+
+        <a href="compare.html" class="nav-icon-btn" title="Comparison List" aria-label="Compare">
+          <span>⚖️</span>
+          <span class="nav-badge nav-compare-badge" style="display:none;">0</span>
+        </a>
+
+        <button class="nav-icon-btn theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
+          ☀️
+        </button>
+
+        <button class="menu-toggle" aria-label="Open Navigation Menu">
+          ☰
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <div class="container container-narrow">
+      
+      <!-- Quiz Header -->
+      <div class="text-center" style="margin-bottom: 32px;">
+        <span class="section-badge">✨ AI-Powered Requirement Finder</span>
+        <h1 style="font-size:clamp(1.8rem, 4vw, 2.6rem); margin-top:8px;">Find Your Match in 6 Quick Steps</h1>
+        <p class="section-subtitle" style="margin: 8px auto 0;">Answer a few preference questions and our engine will calculate the exact compatibility score for 30+ smartphones.</p>
+      </div>
+
+      <!-- ── Quiz Wizard Container ────────────────────────── -->
+      <div id="quizWizardBox" class="quiz-wizard animate-fade-in">
+        
+        <!-- Progress Bar -->
+        <div class="quiz-progress-bar-wrap">
+          <div id="quizProgressFill" class="quiz-progress-fill"></div>
+        </div>
+
+        <div class="quiz-step-header">
+          <div id="quizStepIndicator" class="quiz-step-num">Step 1 of 6</div>
+        </div>
+
+        <!-- ════ STEP 1: BUDGET RANGE ════ -->
+        <div class="quiz-step-content" data-step="1">
+          <h3 class="text-center" style="margin-bottom: 24px;">What is your target budget? 💰</h3>
+          <div class="quiz-options-grid" id="step1Options">
+            <div class="quiz-option-card" data-min="0" data-max="200">
+              <span class="quiz-option-icon">💵</span>
+              <div class="quiz-option-title">Under $200</div>
+              <div class="quiz-option-desc">Essential calling & basic apps</div>
+            </div>
+            <div class="quiz-option-card selected" data-min="200" data-max="400">
+              <span class="quiz-option-icon">💳</span>
+              <div class="quiz-option-title">$200 - $400</div>
+              <div class="quiz-option-desc">Best value budget kings</div>
+            </div>
+            <div class="quiz-option-card" data-min="400" data-max="700">
+              <span class="quiz-option-icon">💎</span>
+              <div class="quiz-option-title">$400 - $700</div>
+              <div class="quiz-option-desc">Upper mid-range & flagship killers</div>
+            </div>
+            <div class="quiz-option-card" data-min="700" data-max="1000">
+              <span class="quiz-option-icon">🚀</span>
+              <div class="quiz-option-title">$700 - $1,000</div>
+              <div class="quiz-option-desc">Premium high-end flagships</div>
+            </div>
+            <div class="quiz-option-card" data-min="1000" data-max="3000">
+              <span class="quiz-option-icon">👑</span>
+              <div class="quiz-option-title">Above $1,000</div>
+              <div class="quiz-option-desc">Ultimate ultra flagships & foldables</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ════ STEP 2: PRIMARY USE CASE ════ -->
+        <div class="quiz-step-content" data-step="2" style="display:none;">
+          <h3 class="text-center" style="margin-bottom: 24px;">What is your primary use case? 🎯</h3>
+          <div class="quiz-options-grid" id="step2Options">
+            <div class="quiz-option-card selected" data-usecase="photography">
+              <span class="quiz-option-icon">📸</span>
+              <div class="quiz-option-title">Photography & Video</div>
+              <div class="quiz-option-desc">Crisp optical zoom, 4K/8K, Night Mode</div>
+            </div>
+            <div class="quiz-option-card" data-usecase="gaming">
+              <span class="quiz-option-icon">🎮</span>
+              <div class="quiz-option-title">Gaming & Esports</div>
+              <div class="quiz-option-desc">120Hz/165Hz, high FPS, cooling, GPU</div>
+            </div>
+            <div class="quiz-option-card" data-usecase="business">
+              <span class="quiz-option-icon">💼</span>
+              <div class="quiz-option-title">Business & Productivity</div>
+              <div class="quiz-option-desc">Multitasking, S-Pen, foldables, security</div>
+            </div>
+            <div class="quiz-option-card" data-usecase="social">
+              <span class="quiz-option-icon">📱</span>
+              <div class="quiz-option-title">Social Media & Streaming</div>
+              <div class="quiz-option-desc">Vibrant OLED screen, stellar selfies</div>
+            </div>
+            <div class="quiz-option-card" data-usecase="battery">
+              <span class="quiz-option-icon">🔋</span>
+              <div class="quiz-option-title">Battery Endurance</div>
+              <div class="quiz-option-desc">5000mAh+, multi-day usage, fast charge</div>
+            </div>
+            <div class="quiz-option-card" data-usecase="music">
+              <span class="quiz-option-icon">🎵</span>
+              <div class="quiz-option-title">Music & Media Enthusiast</div>
+              <div class="quiz-option-desc">Hi-Res audio, 3.5mm jack, stereo sound</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ════ STEP 3: PREFERRED BRAND ════ -->
+        <div class="quiz-step-content" data-step="3" style="display:none;">
+          <h3 class="text-center" style="margin-bottom: 24px;">Do you have a preferred brand? 🏷️</h3>
+          <div class="quiz-options-grid" id="step3Options">
+            <div class="quiz-option-card selected" data-brand="any">
+              <span class="quiz-option-icon">✨</span>
+              <div class="quiz-option-title">No Preference</div>
+              <div class="quiz-option-desc">Show me the absolute best device</div>
+            </div>
+            <div class="quiz-option-card" data-brand="Apple">
+              <span class="quiz-option-icon">🍎</span>
+              <div class="quiz-option-title">Apple (iPhone)</div>
+              <div class="quiz-option-desc">iOS ecosystem, FaceTime, iCloud</div>
+            </div>
+            <div class="quiz-option-card" data-brand="Samsung">
+              <span class="quiz-option-icon">📱</span>
+              <div class="quiz-option-title">Samsung Galaxy</div>
+              <div class="quiz-option-desc">Galaxy AI, AMOLED screens, S-Pen</div>
+            </div>
+            <div class="quiz-option-card" data-brand="Google">
+              <span class="quiz-option-icon">🔍</span>
+              <div class="quiz-option-title">Google Pixel</div>
+              <div class="quiz-option-desc">Stock Android, AI computational camera</div>
+            </div>
+            <div class="quiz-option-card" data-brand="OnePlus">
+              <span class="quiz-option-icon">⚡</span>
+              <div class="quiz-option-title">OnePlus</div>
+              <div class="quiz-option-desc">100W SUPERVOOC, smooth performance</div>
+            </div>
+            <div class="quiz-option-card" data-brand="Xiaomi">
+              <span class="quiz-option-icon">🔥</span>
+              <div class="quiz-option-title">Xiaomi / Redmi</div>
+              <div class="quiz-option-desc">Leica optics, extreme value-for-money</div>
+            </div>
+            <div class="quiz-option-card" data-brand="Motorola">
+              <span class="quiz-option-icon">🦇</span>
+              <div class="quiz-option-title">Motorola</div>
+              <div class="quiz-option-desc">Clean software, affordable 5G devices</div>
+            </div>
+            <div class="quiz-option-card" data-brand="Sony">
+              <span class="quiz-option-icon">🎥</span>
+              <div class="quiz-option-title">Sony Xperia</div>
+              <div class="quiz-option-desc">4K OLED, Alpha camera controls, jack</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ════ STEP 4: OPERATING SYSTEM ════ -->
+        <div class="quiz-step-content" data-step="4" style="display:none;">
+          <h3 class="text-center" style="margin-bottom: 24px;">Which Operating System do you prefer? ⚙️</h3>
+          <div class="quiz-options-grid" id="step4Options">
+            <div class="quiz-option-card selected" data-os="any">
+              <span class="quiz-option-icon">🌐</span>
+              <div class="quiz-option-title">No Preference</div>
+              <div class="quiz-option-desc">I am comfortable with iOS or Android</div>
+            </div>
+            <div class="quiz-option-card" data-os="ios">
+              <span class="quiz-option-icon">🍏</span>
+              <div class="quiz-option-title">Apple iOS</div>
+              <div class="quiz-option-desc">Seamless Apple Watch/Mac syncing, privacy</div>
+            </div>
+            <div class="quiz-option-card" data-os="android">
+              <span class="quiz-option-icon">🤖</span>
+              <div class="quiz-option-title">Android</div>
+              <div class="quiz-option-desc">Maximum customization, USB-C versatility, APKs</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ════ STEP 5: KEY HARDWARE SPECS ════ -->
+        <div class="quiz-step-content" data-step="5" style="display:none;">
+          <h3 class="text-center" style="margin-bottom: 24px;">Pick your minimum hardware specs 🧠</h3>
+          
+          <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:24px; margin-bottom:24px;">
+            <label style="font-weight:700; display:block; margin-bottom:10px;">RAM Capacity:</label>
+            <div class="pill-filter-group">
+              <button class="pill-filter spec-pill active" data-spec-type="ram" data-spec-val="0">Any RAM</button>
+              <button class="pill-filter spec-pill" data-spec-type="ram" data-spec-val="6">6GB+</button>
+              <button class="pill-filter spec-pill" data-spec-type="ram" data-spec-val="8">8GB+</button>
+              <button class="pill-filter spec-pill" data-spec-type="ram" data-spec-val="12">12GB+</button>
+              <button class="pill-filter spec-pill" data-spec-type="ram" data-spec-val="16">16GB+</button>
+            </div>
+          </div>
+
+          <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:24px; margin-bottom:24px;">
+            <label style="font-weight:700; display:block; margin-bottom:10px;">Internal Storage:</label>
+            <div class="pill-filter-group">
+              <button class="pill-filter spec-pill active" data-spec-type="storage" data-spec-val="0">Any Storage</button>
+              <button class="pill-filter spec-pill" data-spec-type="storage" data-spec-val="128">128GB+</button>
+              <button class="pill-filter spec-pill" data-spec-type="storage" data-spec-val="256">256GB+</button>
+              <button class="pill-filter spec-pill" data-spec-type="storage" data-spec-val="512">512GB+</button>
+              <button class="pill-filter spec-pill" data-spec-type="storage" data-spec-val="1024">1TB</button>
+            </div>
+          </div>
+
+          <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:24px; margin-bottom:24px;">
+            <label style="font-weight:700; display:block; margin-bottom:10px;">Screen Size:</label>
+            <div class="pill-filter-group">
+              <button class="pill-filter spec-pill active" data-spec-type="screenSize" data-spec-val="">Any Size</button>
+              <button class="pill-filter spec-pill" data-spec-type="screenSize" data-spec-val="small">Compact (&lt; 6.2")</button>
+              <button class="pill-filter spec-pill" data-spec-type="screenSize" data-spec-val="medium">Standard (6.2" - 6.6")</button>
+              <button class="pill-filter spec-pill" data-spec-type="screenSize" data-spec-val="large">Large (6.7"+)</button>
+            </div>
+          </div>
+
+          <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:24px;">
+            <label style="font-weight:700; display:block; margin-bottom:10px;">Battery Size Priority:</label>
+            <div class="pill-filter-group">
+              <button class="pill-filter spec-pill active" data-spec-type="batteryPriority" data-spec-val="">No Preference</button>
+              <button class="pill-filter spec-pill" data-spec-type="batteryPriority" data-spec-val="good">Good (4300mAh+)</button>
+              <button class="pill-filter spec-pill" data-spec-type="batteryPriority" data-spec-val="beast">Beast (5000mAh+)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ════ STEP 6: SPECIAL FEATURES ════ -->
+        <div class="quiz-step-content" data-step="6" style="display:none;">
+          <h3 class="text-center" style="margin-bottom: 24px;">Select any must-have special features 🌟</h3>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px; margin-bottom:24px;">
+            <label class="checkbox-label" style="background:var(--bg-secondary); padding:14px; border-radius:8px; border:1px solid var(--border-color);">
+              <input type="checkbox" class="feature-check" value="5g" />
+              <span>📶 5G Connectivity</span>
+            </label>
+            <label class="checkbox-label" style="background:var(--bg-secondary); padding:14px; border-radius:8px; border:1px solid var(--border-color);">
+              <input type="checkbox" class="feature-check" value="wirelessCharging" />
+              <span>⚡ Wireless Charging</span>
+            </label>
+            <label class="checkbox-label" style="background:var(--bg-secondary); padding:14px; border-radius:8px; border:1px solid var(--border-color);">
+              <input type="checkbox" class="feature-check" value="fastCharging" />
+              <span>⚡ Fast Charging (65W+)</span>
+            </label>
+            <label class="checkbox-label" style="background:var(--bg-secondary); padding:14px; border-radius:8px; border:1px solid var(--border-color);">
+              <input type="checkbox" class="feature-check" value="waterResistance" />
+              <span>💧 Water Resistant (IP68)</span>
+            </label>
+            <label class="checkbox-label" style="background:var(--bg-secondary); padding:14px; border-radius:8px; border:1px solid var(--border-color);">
+              <input type="checkbox" class="feature-check" value="highRefreshRate" />
+              <span>🖥️ 120Hz+ Refresh Rate</span>
+            </label>
+            <label class="checkbox-label" style="background:var(--bg-secondary); padding:14px; border-radius:8px; border:1px solid var(--border-color);">
+              <input type="checkbox" class="feature-check" value="foldable" />
+              <span>📖 Foldable Display</span>
+            </label>
+            <label class="checkbox-label" style="background:var(--bg-secondary); padding:14px; border-radius:8px; border:1px solid var(--border-color);">
+              <input type="checkbox" class="feature-check" value="stylus" />
+              <span>✏️ Stylus / S-Pen Support</span>
+            </label>
+            <label class="checkbox-label" style="background:var(--bg-secondary); padding:14px; border-radius:8px; border:1px solid var(--border-color);">
+              <input type="checkbox" class="feature-check" value="headphoneJack" />
+              <span>🎧 3.5mm Headphone Jack</span>
+            </label>
+            <label class="checkbox-label" style="background:var(--bg-secondary); padding:14px; border-radius:8px; border:1px solid var(--border-color);">
+              <input type="checkbox" class="feature-check" value="microSD" />
+              <span>💾 MicroSD Expansion</span>
+            </label>
+            <label class="checkbox-label" style="background:var(--bg-secondary); padding:14px; border-radius:8px; border:1px solid var(--border-color);">
+              <input type="checkbox" class="feature-check" value="nfc" />
+              <span>💳 NFC Contactless Pay</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- ── Navigation Buttons ─────────────────────────────── -->
+        <div class="quiz-nav-buttons">
+          <button id="quizPrevBtn" class="btn btn-secondary">
+            ← Previous
+          </button>
+          <button id="quizNextBtn" class="btn btn-primary">
+            Next Step →
+          </button>
+        </div>
+
+      </div>
+
+      <!-- ── Quiz Results Container (Hidden until complete) ── -->
+      <div id="quizResultsBox" class="animate-slide-up" style="display:none;">
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:36px; margin-bottom:32px; text-align:center;">
+          <div style="font-size:3.5rem; margin-bottom:12px;">🎉</div>
+          <span class="section-badge">Match Algorithm Complete</span>
+          <h2>Here Are Your Top Matches!</h2>
+          <p class="section-subtitle" style="margin:8px auto 24px;">Ranked from highest spec & budget compatibility score to lowest.</p>
+          
+          <div style="display:flex; justify-content:center; gap:12px;">
+            <button class="btn btn-secondary" onclick="window.location.reload();">🔄 Retake Quiz</button>
+            <a href="phones.html" class="btn btn-outline">Explore All 30+ Phones</a>
+          </div>
+        </div>
+
+        <!-- Matched Phones Grid -->
+        <div id="quizResultsGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:24px;">
+          <!-- Dynamically inserted by js/app.js -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── Footer ────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>© 2026 SmartPick Inc. All rights reserved.</div>
+        <div style="display:flex; gap:16px;">
+          <a href="index.html">Home</a>
+          <a href="compare.html">Compare</a>
+          <a href="top-picks.html">Top Picks</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data/phones.js"></script>
+  <script src="js/wishlist.js"></script>
+  <script src="js/compare.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/priceChart.js"></script>
+  <script src="js/finder.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
