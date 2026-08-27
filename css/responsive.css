@@ -45,6 +45,10 @@
   .detail-grid {
     grid-template-columns: 1fr !important;
   }
+
+  .analytics-grid, [style*="grid-template-columns:1.3fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 /* ── Tablet (< 768px) ──────────────────────────────────── */

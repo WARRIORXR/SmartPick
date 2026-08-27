@@ -7,6 +7,9 @@
   <meta name="description" content="Find your dream smartphone based on your budget, gaming, camera, and battery requirements. Compare live prices across Amazon, Best Buy, Walmart, and more." />
   <meta name="keywords" content="smartphone finder, compare smartphones, phone price comparison, best camera phone, best gaming phone" />
   
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
   <!-- Open Graph -->
   <meta property="og:title" content="SmartPick - Smartphone Finder & Comparator" />
   <meta property="og:description" content="AI-assisted smartphone finder quiz and side-by-side spec comparator with multi-store price tracker." />
@@ -128,11 +131,11 @@
                   <span class="badge badge-winner">👑 #1 Smartphone</span>
                   <span style="font-weight:700; color:var(--success);">98% Match</span>
                 </div>
-                <img src="https://picsum.photos/seed/galaxys24ultra/400/350" alt="Samsung Galaxy S24 Ultra" style="border-radius:12px; margin-bottom:16px; width:100%; height:220px; object-fit:contain;" />
+                <img src="https://picsum.photos/seed/galaxys24ultra/400/350" alt="Samsung Galaxy S24 Ultra" onerror="this.onerror=null; this.src=getPhoneFallbackSvg('Galaxy S24 Ultra', 'Samsung');" style="border-radius:12px; margin-bottom:16px; width:100%; height:220px; object-fit:contain;" />
                 <h3 style="font-size:1.3rem;">Galaxy S24 Ultra</h3>
                 <p style="font-size:0.85rem; margin-bottom:12px;">Snapdragon 8 Gen 3 • 200MP Quad Cam • S Pen</p>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <span class="current-price">$1,299</span>
+                  <span id="heroSamplePrice" class="current-price">$1,299</span>
                   <a href="phone-detail.html?id=galaxy-s24-ultra" class="btn btn-primary btn-sm">Inspect Specs</a>
                 </div>
               </div>

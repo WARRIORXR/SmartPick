@@ -4,10 +4,10 @@
 
 // ── Currency Rates & Formatter ──────────────────────────────
 const CURRENCY_RATES = {
-  USD: { symbol: '$', rate: 1.0 },
-  EUR: { symbol: '€', rate: 0.92 },
-  GBP: { symbol: '£', rate: 0.79 },
-  INR: { symbol: '₹', rate: 83.2 }
+  USD: { symbol: '$', rate: 1.0, locale: 'en-US' },
+  EUR: { symbol: '€', rate: 0.92, locale: 'de-DE' },
+  GBP: { symbol: '£', rate: 0.79, locale: 'en-GB' },
+  INR: { symbol: '₹', rate: 83.2, locale: 'en-IN' }
 };
 
 let currentCurrency = localStorage.getItem('smartpick_currency') || 'USD';
@@ -28,7 +28,34 @@ function formatPrice(amountInUSD) {
   if (typeof amountInUSD !== 'number' || isNaN(amountInUSD)) return 'N/A';
   const curr = CURRENCY_RATES[currentCurrency] || CURRENCY_RATES.USD;
   const converted = Math.round(amountInUSD * curr.rate);
-  return `${curr.symbol}${converted.toLocaleString()}`;
+  return `${curr.symbol}${converted.toLocaleString(curr.locale)}`;
+}
+
+// ── SVG Phone Placeholder Fallback ──────────────────────────
+function getPhoneFallbackSvg(name = 'Smartphone', brand = 'SmartPick') {
+  const cleanName = String(name).replace(/"/g, '&quot;');
+  const cleanBrand = String(brand).replace(/"/g, '&quot;');
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500">
+    <defs>
+      <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#1a1a28"/>
+        <stop offset="100%" stop-color="#0f0f18"/>
+      </linearGradient>
+      <linearGradient id="accGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#6c63ff"/>
+        <stop offset="100%" stop-color="#00d4ff"/>
+      </linearGradient>
+    </defs>
+    <rect width="400" height="500" rx="24" fill="url(#bgGrad)"/>
+    <rect x="70" y="30" width="260" height="440" rx="36" fill="#12121c" stroke="url(#accGrad)" stroke-width="3"/>
+    <circle cx="200" cy="55" r="5" fill="#33334d"/>
+    <rect x="180" y="52" width="40" height="6" rx="3" fill="#222233"/>
+    <circle cx="200" cy="200" r="45" fill="url(#accGrad)" opacity="0.15"/>
+    <text x="200" y="208" fill="#6c63ff" font-size="34" text-anchor="middle" font-family="sans-serif">📱</text>
+    <text x="200" y="290" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle" font-family="sans-serif">${cleanName}</text>
+    <text x="200" y="315" fill="#a0a0b0" font-size="13" text-anchor="middle" font-family="sans-serif">${cleanBrand}</text>
+  </svg>`;
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
 }
 
 // ── Theme Manager (Dark / Light) ────────────────────────────
@@ -101,7 +128,7 @@ function renderStars(rating) {
   for (let i = 0; i < remaining; i++) {
     html += '☆';
   }
-  return `<span class="stars">${html}</span>`;
+  return `<span class="stars" aria-label="${rating} out of 5 stars">${html}</span>`;
 }
 
 // ── Phone Card Renderer ─────────────────────────────────────
@@ -119,8 +146,10 @@ function renderPhoneCard(phone, options = {}) {
   const discountBadge = discount > 0 ? `<span class="badge badge-discount">-${discount}%</span>` : '';
   const rankBadge = options.rank ? `<div class="badge-rank">#${options.rank}</div>` : '';
 
+  const fallbackSvg = getPhoneFallbackSvg(phone.name, phone.brand);
+
   return `
-    <div class="phone-card" data-phone-id="${phone.id}">
+    <div class="phone-card animate-fade-in" data-phone-id="${phone.id}">
       ${rankBadge}
       <div class="phone-card-top">
         <div class="phone-badges">
@@ -147,7 +176,11 @@ function renderPhoneCard(phone, options = {}) {
 
       <div class="phone-image-wrap">
         <a href="phone-detail.html?id=${phone.id}">
-          <img src="${phone.image}" alt="${phone.name}" class="phone-image" loading="lazy" />
+          <img src="${phone.image}" 
+               alt="${phone.name}" 
+               class="phone-image" 
+               loading="lazy" 
+               onerror="this.onerror=null; this.src='${fallbackSvg}';" />
         </a>
       </div>
 
@@ -269,9 +302,10 @@ function updateFloatingCompareBar() {
     const id = selectedIds[idx];
     if (id) {
       const phone = PHONES_DATA.find(p => p.id === id);
+      const fallback = phone ? getPhoneFallbackSvg(phone.name, phone.brand) : '';
       return `
         <div class="floating-item-slot filled" title="${phone ? phone.name : ''}">
-          <img src="${phone ? phone.image : ''}" alt="" />
+          <img src="${phone ? phone.image : ''}" alt="" onerror="this.onerror=null; this.src='${fallback}';" />
         </div>
       `;
     }
@@ -313,7 +347,7 @@ function initVoiceSearch(inputElement, buttonElement) {
     buttonElement.addEventListener('click', () => {
       try {
         buttonElement.classList.add('listening');
-        showToast('Listening... Speak phone name or brand', 'info');
+        showToast('Listening... Speak phone name or brand 🎙️', 'info');
         recognition.start();
       } catch (err) {
         recognition.stop();
@@ -327,11 +361,10 @@ function initVoiceSearch(inputElement, buttonElement) {
       buttonElement.classList.remove('listening');
       showToast(`Searching for: "${transcript}"`, 'success');
       inputElement.dispatchEvent(new Event('input', { bubbles: true }));
-      // If on homepage and user presses enter or speaks, can redirect to phones.html
       if (window.location.pathname.includes('index') || window.location.pathname.endsWith('/')) {
         setTimeout(() => {
           window.location.href = `phones.html?q=${encodeURIComponent(transcript)}`;
-        }, 800);
+        }, 600);
       }
     };
 
@@ -345,3 +378,34 @@ function initVoiceSearch(inputElement, buttonElement) {
     };
   }
 }
+
+// ── Price Drop Alert Helper ─────────────────────────────────
+const PriceAlertService = {
+  KEY: 'smartpick_price_alerts',
+  
+  getAlerts() {
+    try {
+      const data = localStorage.getItem(this.KEY);
+      return data ? JSON.parse(data) : [];
+    } catch(e) {
+      return [];
+    }
+  },
+
+  hasAlert(phoneId) {
+    return this.getAlerts().includes(phoneId);
+  },
+
+  toggleAlert(phoneId) {
+    let alerts = this.getAlerts();
+    if (alerts.includes(phoneId)) {
+      alerts = alerts.filter(id => id !== phoneId);
+      localStorage.setItem(this.KEY, JSON.stringify(alerts));
+      return false;
+    } else {
+      alerts.push(phoneId);
+      localStorage.setItem(this.KEY, JSON.stringify(alerts));
+      return true;
+    }
+  }
+};

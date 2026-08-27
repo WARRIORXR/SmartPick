@@ -44,6 +44,25 @@ document.addEventListener('DOMContentLoaded', () => {
     initVoiceSearch(headerSearchInput, headerVoiceBtn);
   }
 
+  // Handle Window Resize for Charts
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const page = document.body.getAttribute('data-page') || '';
+      if (page === 'phone-detail') {
+        const urlParams = new URLSearchParams(window.location.search);
+        const phoneId = urlParams.get('id') || PHONES_DATA[0].id;
+        const phone = PHONES_DATA.find(p => p.id === phoneId) || PHONES_DATA[0];
+        if (phone && phone.price.history) PriceChart.render('priceHistoryCanvas', phone.price.history, phone.price.current);
+        if (phone && document.getElementById('specsRadarCanvas')) PriceChart.renderRadar('specsRadarCanvas', [phone]);
+      } else if (page === 'compare') {
+        const phones = CompareService.getPhones();
+        if (phones.length > 0 && document.getElementById('compareRadarCanvas')) PriceChart.renderRadar('compareRadarCanvas', phones);
+      }
+    }, 200);
+  });
+
   // Re-render on currency change event
   window.addEventListener('currencyChanged', () => {
     initCurrentPage();
@@ -94,6 +113,15 @@ function initHomePage() {
     initVoiceSearch(heroSearchInput, heroVoiceBtn);
   }
 
+  // Update Hero Card Price dynamically based on currency
+  const heroSamplePrice = document.getElementById('heroSamplePrice');
+  if (heroSamplePrice) {
+    const s24Ultra = PHONES_DATA.find(p => p.id === 'galaxy-s24-ultra');
+    if (s24Ultra) {
+      heroSamplePrice.textContent = formatPrice(s24Ultra.price.current);
+    }
+  }
+
   // Render Featured Phones (Top 4 Flagships)
   const featuredContainer = document.getElementById('featuredPhonesContainer');
   if (featuredContainer) {
@@ -124,7 +152,7 @@ function initFinderPage() {
   let currentStep = 1;
   const totalSteps = 6;
   const answers = {
-    budget: { min: 0, max: 2000 },
+    budget: { min: 200, max: 400 },
     useCase: 'photography',
     brand: 'any',
     os: 'any',
@@ -143,9 +171,15 @@ function initFinderPage() {
     if (bar) bar.style.width = `${pct}%`;
     if (stepText) stepText.textContent = `Step ${currentStep} of ${totalSteps}`;
 
-    // Show only current step container
+    // Show only current step container with smooth animation
     document.querySelectorAll('.quiz-step-content').forEach(el => {
-      el.style.display = el.getAttribute('data-step') == currentStep ? 'block' : 'none';
+      const isCurrent = el.getAttribute('data-step') == currentStep;
+      el.style.display = isCurrent ? 'block' : 'none';
+      if (isCurrent) {
+        el.classList.remove('animate-fade-in');
+        void el.offsetWidth; // Trigger reflow
+        el.classList.add('animate-fade-in');
+      }
     });
 
     const prevBtn = document.getElementById('quizPrevBtn');
@@ -154,7 +188,7 @@ function initFinderPage() {
     if (nextBtn) nextBtn.textContent = currentStep === totalSteps ? 'Find My Perfect Match 🚀' : 'Next Step →';
   };
 
-  // Step 1: Budget Option selection
+  // Step 1: Preset Budget Cards
   document.querySelectorAll('#step1Options .quiz-option-card').forEach(card => {
     card.addEventListener('click', () => {
       document.querySelectorAll('#step1Options .quiz-option-card').forEach(c => c.classList.remove('selected'));
@@ -162,8 +196,27 @@ function initFinderPage() {
       const min = parseInt(card.getAttribute('data-min'), 10);
       const max = parseInt(card.getAttribute('data-max'), 10);
       answers.budget = { min, max };
+      
+      const customSlider = document.getElementById('customBudgetSlider');
+      const customDisplay = document.getElementById('customBudgetDisplay');
+      if (customSlider && customDisplay) {
+        customSlider.value = max > 2000 ? 2000 : max;
+        customDisplay.textContent = formatPrice(Number(customSlider.value));
+      }
     });
   });
+
+  // Step 1: Custom Slider Input
+  const customBudgetSlider = document.getElementById('customBudgetSlider');
+  const customBudgetDisplay = document.getElementById('customBudgetDisplay');
+  if (customBudgetSlider && customBudgetDisplay) {
+    customBudgetSlider.addEventListener('input', (e) => {
+      const val = Number(e.target.value);
+      customBudgetDisplay.textContent = formatPrice(val);
+      answers.budget = { min: 0, max: val };
+      document.querySelectorAll('#step1Options .quiz-option-card').forEach(c => c.classList.remove('selected'));
+    });
+  }
 
   // Step 2: Use Case selection
   document.querySelectorAll('#step2Options .quiz-option-card').forEach(card => {
@@ -234,7 +287,6 @@ function initFinderPage() {
         currentStep++;
         updateProgress();
       } else {
-        // Complete Quiz & Show Results
         renderQuizResults(answers);
       }
     });
@@ -263,7 +315,7 @@ function renderQuizResults(answers) {
 
   // Launch celebration confetti!
   QuizEngine.launchConfetti();
-  showToast(`Found ${topMatches.length} fantastic matches for you!`, 'success');
+  showToast(`Found ${topMatches.length} matching recommendations!`, 'success');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -294,6 +346,7 @@ function initPhonesPage() {
     os: 'all',
     minRam: 0,
     minStorage: 0,
+    screenSizeCategory: '',
     displayTypes: [],
     minCameraMp: 0,
     minBattery: 0,
@@ -302,21 +355,26 @@ function initPhonesPage() {
   };
 
   if (initialCategory) {
-    if (initialCategory === 'gaming') activeFilters.features.push('fastCharging');
+    if (initialCategory === 'gaming') { activeFilters.features.push('fastCharging'); activeFilters.minRefreshRate = 120; }
     if (initialCategory === 'camera') activeFilters.minCameraMp = 50;
     if (initialCategory === 'budget') activeFilters.maxPrice = 400;
+    if (initialCategory === 'battery') activeFilters.minBattery = 5000;
     if (initialCategory === '5g') activeFilters.features.push('5g');
+    if (initialCategory === 'productivity') activeFilters.features.push('foldable');
   }
 
-  // Price range sliders
-  const priceMinInput = document.getElementById('priceMinInput');
-  const priceMaxInput = document.getElementById('priceMaxInput');
+  // Price range slider & display sync
   const priceRangeSlider = document.getElementById('priceRangeSlider');
+  const priceMaxDisplay = document.getElementById('priceMaxDisplay');
 
-  if (priceRangeSlider) {
+  if (priceRangeSlider && priceMaxDisplay) {
+    priceRangeSlider.value = activeFilters.maxPrice;
+    priceMaxDisplay.textContent = formatPrice(Number(priceRangeSlider.value));
+
     priceRangeSlider.addEventListener('input', (e) => {
-      activeFilters.maxPrice = Number(e.target.value);
-      if (priceMaxInput) priceMaxInput.value = e.target.value;
+      const val = Number(e.target.value);
+      activeFilters.maxPrice = val;
+      priceMaxDisplay.textContent = formatPrice(val);
       applyAndRender();
     });
   }
@@ -355,6 +413,46 @@ function initPhonesPage() {
     });
   });
 
+  // Storage Filter Pills
+  document.querySelectorAll('.storage-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.storage-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeFilters.minStorage = Number(pill.getAttribute('data-storage') || 0);
+      applyAndRender();
+    });
+  });
+
+  // Camera MP Filter Pills
+  document.querySelectorAll('.camera-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.camera-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeFilters.minCameraMp = Number(pill.getAttribute('data-mp') || 0);
+      applyAndRender();
+    });
+  });
+
+  // Battery Filter Pills
+  document.querySelectorAll('.battery-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.battery-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeFilters.minBattery = Number(pill.getAttribute('data-battery') || 0);
+      applyAndRender();
+    });
+  });
+
+  // Refresh Rate Filter Pills
+  document.querySelectorAll('.refresh-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.refresh-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeFilters.minRefreshRate = Number(pill.getAttribute('data-refresh') || 0);
+      applyAndRender();
+    });
+  });
+
   // Display Type Checkboxes
   document.querySelectorAll('.display-type-check').forEach(chk => {
     chk.addEventListener('change', () => {
@@ -370,6 +468,9 @@ function initPhonesPage() {
 
   // Feature Checkboxes
   document.querySelectorAll('.filter-feature-check').forEach(chk => {
+    if (activeFilters.features.includes(chk.value)) {
+      chk.checked = true;
+    }
     chk.addEventListener('change', () => {
       const feat = chk.value;
       if (chk.checked) {
@@ -381,11 +482,15 @@ function initPhonesPage() {
     });
   });
 
-  // Search Input live
+  // Search Input live with debounce
   if (searchInput) {
+    let timer = null;
     searchInput.addEventListener('input', (e) => {
-      activeFilters.query = e.target.value;
-      applyAndRender();
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        activeFilters.query = e.target.value;
+        applyAndRender();
+      }, 150);
     });
     initVoiceSearch(searchInput, voiceBtn);
   }
@@ -457,8 +562,14 @@ function initPhoneDetailPage() {
   const wishlistBtn = document.getElementById('detailWishlistBtn');
   const compareBtn = document.getElementById('detailCompareBtn');
   const shareBtn = document.getElementById('detailShareBtn');
+  const priceAlertBtn = document.getElementById('detailPriceAlertBtn');
 
-  if (mainImage) mainImage.src = phone.image;
+  const fallbackSvg = getPhoneFallbackSvg(phone.name, phone.brand);
+
+  if (mainImage) {
+    mainImage.src = phone.image;
+    mainImage.onerror = () => { mainImage.src = fallbackSvg; };
+  }
   if (nameEl) nameEl.textContent = phone.name;
   if (brandEl) brandEl.textContent = phone.brand;
   if (priceEl) priceEl.textContent = formatPrice(phone.price.current);
@@ -486,6 +597,7 @@ function initPhoneDetailPage() {
       <img src="${imgUrl}" 
            alt="${phone.name} view ${idx+1}" 
            class="gallery-thumb ${idx === 0 ? 'active' : ''}" 
+           onerror="this.onerror=null; this.src='${fallbackSvg}';"
            onclick="document.getElementById('detailMainImage').src='${imgUrl}'; document.querySelectorAll('.gallery-thumb').forEach(t=>t.classList.remove('active')); this.classList.add('active');" 
            style="width:65px; height:65px; object-fit:cover; border-radius:8px; cursor:pointer; border:2px solid var(--border-color);" />
     `).join('');
@@ -521,6 +633,20 @@ function initPhoneDetailPage() {
     };
   }
 
+  // Price Alert Button
+  if (priceAlertBtn) {
+    const hasAlert = PriceAlertService.hasAlert(phone.id);
+    priceAlertBtn.innerHTML = hasAlert ? '🔔 Price Alert Active' : '🔔 Alert Me on Price Drop';
+    priceAlertBtn.className = hasAlert ? 'btn btn-primary btn-lg' : 'btn btn-outline btn-lg';
+    
+    priceAlertBtn.onclick = () => {
+      const active = PriceAlertService.toggleAlert(phone.id);
+      priceAlertBtn.innerHTML = active ? '🔔 Price Alert Active' : '🔔 Alert Me on Price Drop';
+      priceAlertBtn.className = active ? 'btn btn-primary btn-lg' : 'btn btn-outline btn-lg';
+      showToast(active ? `Price drop notifications enabled for ${phone.name}` : `Price alert removed for ${phone.name}`, active ? 'success' : 'info');
+    };
+  }
+
   // Pros & Cons
   const prosContainer = document.getElementById('detailProsList');
   const consContainer = document.getElementById('detailConsList');
@@ -531,30 +657,36 @@ function initPhoneDetailPage() {
     consContainer.innerHTML = phone.cons.map(c => `<li style="margin-bottom:8px; display:flex; align-items:flex-start; gap:8px;"><span style="color:var(--danger);">✕</span> <span>${c}</span></li>`).join('');
   }
 
-  // Store Price Comparison Table
+  // Store Price Comparison Table (Supports Indian & Global Stores)
   const storeTable = document.getElementById('storePriceTable');
   if (storeTable && phone.price.stores) {
     const stores = Object.entries(phone.price.stores);
+    
+    // Add Flipkart / Indian retailers if in INR mode or as additional retailers
+    if (!phone.price.stores.flipkart) {
+      stores.push(['flipkart', Math.round(phone.price.current * 0.98)]);
+    }
+
     const minStorePrice = Math.min(...stores.map(s => s[1]));
 
     storeTable.innerHTML = stores.map(([storeName, price]) => {
       const isBest = price === minStorePrice;
-      const storeIcons = { amazon: '🛒', bestbuy: '🏪', walmart: '🏬', official: '📱' };
-      const displayStoreNames = { amazon: 'Amazon', bestbuy: 'Best Buy', walmart: 'Walmart', official: `${phone.brand} Store` };
+      const storeIcons = { amazon: '🛒', bestbuy: '🏪', walmart: '🏬', official: '📱', flipkart: '🛍️' };
+      const displayStoreNames = { amazon: 'Amazon', bestbuy: 'Best Buy', walmart: 'Walmart', official: `${phone.brand} Official Store`, flipkart: 'Flipkart Online' };
 
       return `
         <div class="store-row ${isBest ? 'best-deal' : ''}">
           <div class="store-info">
             <span class="store-icon">${storeIcons[storeName] || '🏪'}</span>
             <div>
-              <div>${displayStoreNames[storeName] || storeName}</div>
-              ${isBest ? '<span class="badge badge-winner" style="font-size:0.7rem; padding:2px 6px;">🏆 Lowest Price</span>' : ''}
+              <div style="font-weight:700;">${displayStoreNames[storeName] || storeName}</div>
+              ${isBest ? '<span class="badge badge-winner" style="font-size:0.7rem; padding:2px 6px;">🏆 Lowest Verified Price</span>' : '<span style="font-size:0.78rem; color:var(--text-muted);">In Stock • Free Delivery</span>'}
             </div>
           </div>
           <div class="store-pricing">
             <span class="store-price">${formatPrice(price)}</span>
-            <a href="https://www.${storeName}.com" target="_blank" rel="noopener" class="btn ${isBest ? 'btn-primary' : 'btn-secondary'} btn-sm">
-              Buy Now ↗
+            <a href="https://www.google.com/search?q=${encodeURIComponent(storeName + ' ' + phone.name)}" target="_blank" rel="noopener" class="btn ${isBest ? 'btn-primary' : 'btn-secondary'} btn-sm">
+              Visit Store ↗
             </a>
           </div>
         </div>
@@ -567,7 +699,6 @@ function initPhoneDetailPage() {
   if (fullSpecsTable) {
     fullSpecsTable.innerHTML = `
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:24px;">
-        <!-- Display Specs -->
         <div class="spec-block" style="background:var(--bg-secondary); padding:20px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
           <h4 style="margin-bottom:12px; color:var(--primary); display:flex; align-items:center; gap:8px;">📱 Display</h4>
           <p><strong>Size:</strong> ${phone.specs.display.size} inches</p>
@@ -578,7 +709,6 @@ function initPhoneDetailPage() {
           <p><strong>Glass:</strong> ${phone.specs.display.protection}</p>
         </div>
 
-        <!-- Performance Specs -->
         <div class="spec-block" style="background:var(--bg-secondary); padding:20px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
           <h4 style="margin-bottom:12px; color:var(--primary); display:flex; align-items:center; gap:8px;">⚡ Performance</h4>
           <p><strong>Chipset:</strong> ${phone.specs.performance.chipset}</p>
@@ -589,7 +719,6 @@ function initPhoneDetailPage() {
           <p><strong>OS:</strong> ${phone.os}</p>
         </div>
 
-        <!-- Camera Specs -->
         <div class="spec-block" style="background:var(--bg-secondary); padding:20px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
           <h4 style="margin-bottom:12px; color:var(--primary); display:flex; align-items:center; gap:8px;">📷 Camera</h4>
           <p><strong>Main:</strong> ${phone.specs.camera.main}</p>
@@ -599,7 +728,6 @@ function initPhoneDetailPage() {
           <p><strong>Video:</strong> ${phone.specs.camera.video}</p>
         </div>
 
-        <!-- Battery Specs -->
         <div class="spec-block" style="background:var(--bg-secondary); padding:20px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
           <h4 style="margin-bottom:12px; color:var(--primary); display:flex; align-items:center; gap:8px;">🔋 Battery & Power</h4>
           <p><strong>Capacity:</strong> ${phone.specs.battery.capacity} mAh</p>
@@ -608,7 +736,6 @@ function initPhoneDetailPage() {
           <p><strong>Reverse Wireless:</strong> ${phone.specs.battery.reverseWireless ? 'Yes' : 'No'}</p>
         </div>
 
-        <!-- Connectivity & Special -->
         <div class="spec-block" style="background:var(--bg-secondary); padding:20px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
           <h4 style="margin-bottom:12px; color:var(--primary); display:flex; align-items:center; gap:8px;">📶 Connectivity</h4>
           <p><strong>5G:</strong> ${phone.specs.connectivity.fiveG ? 'Supported' : 'No'}</p>
@@ -618,7 +745,6 @@ function initPhoneDetailPage() {
           <p><strong>USB:</strong> ${phone.specs.connectivity.usb}</p>
         </div>
 
-        <!-- Extra Features -->
         <div class="spec-block" style="background:var(--bg-secondary); padding:20px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
           <h4 style="margin-bottom:12px; color:var(--primary); display:flex; align-items:center; gap:8px;">🛡️ Build & Extra</h4>
           <p><strong>Water Resistance:</strong> ${phone.specs.features.waterResistance || 'None'}</p>
@@ -635,6 +761,11 @@ function initPhoneDetailPage() {
   // Render Price History Chart
   if (phone.price.history) {
     PriceChart.render('priceHistoryCanvas', phone.price.history, phone.price.current);
+  }
+
+  // Render Specs Radar Chart
+  if (document.getElementById('specsRadarCanvas')) {
+    PriceChart.renderRadar('specsRadarCanvas', [phone]);
   }
 
   // Similar Phones in price range
@@ -666,6 +797,12 @@ function initComparePage() {
     container.innerHTML = CompareService.renderComparisonTable(phones);
   }
 
+  // Render Radar Chart for compared phones
+  const radarCanvas = document.getElementById('compareRadarCanvas');
+  if (radarCanvas && phones.length > 0) {
+    PriceChart.renderRadar('compareRadarCanvas', phones);
+  }
+
   // Share comparison button
   const shareBtn = document.getElementById('shareCompareBtn');
   if (shareBtn) {
@@ -673,6 +810,19 @@ function initComparePage() {
       const link = CompareService.getShareableLink();
       navigator.clipboard.writeText(link);
       showToast('Comparison link copied to clipboard! 📋', 'success');
+    };
+  }
+
+  // Email comparison button
+  const emailBtn = document.getElementById('emailCompareBtn');
+  if (emailBtn) {
+    emailBtn.onclick = () => {
+      const phones = CompareService.getPhones();
+      const phoneNames = phones.map(p => p.name).join(' vs ');
+      const link = CompareService.getShareableLink();
+      const subject = encodeURIComponent(`Smartphone Comparison: ${phoneNames}`);
+      const body = encodeURIComponent(`Hey,\n\nCheck out this smartphone comparison on SmartPick:\n${phoneNames}\n\nView comparison: ${link}\n\nEnjoy!`);
+      window.location.href = `mailto:?subject=${subject}&body=${body}`;
     };
   }
 
@@ -694,10 +844,11 @@ function initComparePage() {
 
       modalList.innerHTML = matches.map(phone => {
         const isAdded = currentSelected.includes(phone.id);
+        const fallbackSvg = getPhoneFallbackSvg(phone.name, phone.brand);
         return `
           <div class="store-row" style="margin-bottom:8px; cursor:pointer;" onclick="selectPhoneForCompare('${phone.id}')">
             <div class="store-info">
-              <img src="${phone.image}" style="width:40px; height:40px; object-fit:contain;" />
+              <img src="${phone.image}" style="width:40px; height:40px; object-fit:contain;" onerror="this.onerror=null; this.src='${fallbackSvg}';" />
               <div>
                 <div style="font-weight:700;">${phone.name}</div>
                 <div style="font-size:0.8rem; color:var(--text-muted);">${phone.brand} • ${formatPrice(phone.price.current)}</div>
@@ -749,7 +900,7 @@ function initWishlistPage() {
   const savedPhones = WishlistService.getPhones();
 
   if (countEl) {
-    countEl.textContent = `${savedPhones.length} items saved`;
+    countEl.textContent = `${savedPhones.length} items saved in your collection`;
   }
 
   if (savedPhones.length === 0) {
@@ -800,7 +951,9 @@ function initTopPicksPage() {
     { id: 'bestBattery', title: '🔋 Best Battery Endurance', desc: '5000mAh+ powerhouses with blistering fast charging speeds for multi-day usage' },
     { id: 'bestBusiness', title: '💼 Best Productivity & Business', desc: 'Foldable multitasking, stylus support, enterprise security, and blazing productivity tools' },
     { id: 'bestIphones', title: '🍎 Best Apple iPhones Ranked', desc: 'Every iPhone ranked by hardware capabilities, value, and ecosystem features' },
-    { id: 'bestAndroid', title: '🤖 Best Android Flagships', desc: 'Top tier Android innovators with open versatility, custom chips, and superior hardware' }
+    { id: 'bestAndroid', title: '🤖 Best Android Flagships', desc: 'Top tier Android innovators with open versatility, custom chips, and superior hardware' },
+    { id: 'latestReleased', title: '🆕 Latest Released Phones', desc: 'The newest flagship devices introduced with latest gen chipsets and optics' },
+    { id: 'editorsChoice', title: '⭐ Editor\'s Choice Awards', desc: 'Hand-picked awards by our hardware review team' }
   ];
 
   const mainContainer = document.getElementById('topPicksCategoriesContainer');

@@ -38,7 +38,7 @@ const FilterEngine = {
 
       // 3. Brands (array of selected brand names)
       if (criteria.brands && criteria.brands.length > 0) {
-        if (!criteria.brands.includes(phone.brand)) return false;
+        if (!criteria.brands.some(b => b.toLowerCase() === phone.brand.toLowerCase())) return false;
       }
 
       // 4. Operating System (iOS / Android)
@@ -60,8 +60,11 @@ const FilterEngine = {
 
       // 7. Screen Size Range [minSize, maxSize]
       const screenSize = parseFloat(phone.specs.display.size);
-      if (criteria.minScreenSize !== undefined && screenSize < parseFloat(criteria.minScreenSize)) return false;
-      if (criteria.maxScreenSize !== undefined && screenSize > parseFloat(criteria.maxScreenSize)) return false;
+      if (criteria.screenSizeCategory) {
+        if (criteria.screenSizeCategory === 'small' && screenSize >= 6.2) return false;
+        if (criteria.screenSizeCategory === 'medium' && (screenSize < 6.2 || screenSize > 6.6)) return false;
+        if (criteria.screenSizeCategory === 'large' && screenSize <= 6.6) return false;
+      }
 
       // 8. Display Type (OLED, AMOLED, LCD, LTPO)
       if (criteria.displayTypes && criteria.displayTypes.length > 0) {
@@ -101,7 +104,7 @@ const FilterEngine = {
               if (phone.specs.battery.wiredCharging < 45) return false;
               break;
             case 'ip68':
-              if (!phone.specs.features.waterResistance.includes('IP68')) return false;
+              if (!phone.specs.features.waterResistance || !phone.specs.features.waterResistance.includes('IP68')) return false;
               break;
             case 'foldable':
               if (!phone.specs.features.foldable) return false;
@@ -152,41 +155,49 @@ const FilterEngine = {
     }
   },
 
-  // ── Setup Live Autocomplete ─────────────────────────────────
+  // ── Setup Live Autocomplete (Debounced) ──────────────────────
   setupAutocomplete(inputElement, dropdownElement) {
     if (!inputElement || !dropdownElement) return;
 
+    let debounceTimer = null;
+
     inputElement.addEventListener('input', (e) => {
-      const q = e.target.value.trim();
-      if (q.length < 1) {
-        dropdownElement.classList.remove('active');
-        dropdownElement.innerHTML = '';
-        return;
-      }
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        const q = e.target.value.trim();
+        if (q.length < 1) {
+          dropdownElement.classList.remove('active');
+          dropdownElement.innerHTML = '';
+          return;
+        }
 
-      const results = this.search(q).slice(0, 6);
-      if (results.length === 0) {
-        dropdownElement.innerHTML = `
-          <div style="padding:16px; text-align:center; color:var(--text-muted); font-size:0.9rem;">
-            No smartphones found matching "<strong>${q}</strong>"
-          </div>
-        `;
+        const results = this.search(q).slice(0, 6);
+        if (results.length === 0) {
+          dropdownElement.innerHTML = `
+            <div style="padding:16px; text-align:center; color:var(--text-muted); font-size:0.9rem;">
+              No smartphones found matching "<strong>${q}</strong>"
+            </div>
+          `;
+          dropdownElement.classList.add('active');
+          return;
+        }
+
+        dropdownElement.innerHTML = results.map(phone => {
+          const fallbackSvg = getPhoneFallbackSvg(phone.name, phone.brand);
+          return `
+            <div class="autocomplete-item" onclick="window.location.href='phone-detail.html?id=${phone.id}'">
+              <img src="${phone.image}" alt="${phone.name}" onerror="this.onerror=null; this.src='${fallbackSvg}';" />
+              <div class="autocomplete-info">
+                <div class="autocomplete-title">${phone.name}</div>
+                <div class="autocomplete-meta">${phone.brand} • ${phone.specs.display.size}" ${phone.specs.display.type} • ${phone.specs.performance.chipset}</div>
+              </div>
+              <div class="autocomplete-price">${formatPrice(phone.price.current)}</div>
+            </div>
+          `;
+        }).join('');
+
         dropdownElement.classList.add('active');
-        return;
-      }
-
-      dropdownElement.innerHTML = results.map(phone => `
-        <div class="autocomplete-item" onclick="window.location.href='phone-detail.html?id=${phone.id}'">
-          <img src="${phone.image}" alt="${phone.name}" />
-          <div class="autocomplete-info">
-            <div class="autocomplete-title">${phone.name}</div>
-            <div class="autocomplete-meta">${phone.brand} • ${phone.specs.display.size}" ${phone.specs.display.type} • ${phone.specs.performance.chipset}</div>
-          </div>
-          <div class="autocomplete-price">${formatPrice(phone.price.current)}</div>
-        </div>
-      `).join('');
-
-      dropdownElement.classList.add('active');
+      }, 150);
     });
 
     // Close dropdown on outside click

@@ -6,6 +6,9 @@
   <title>Smart Requirement Finder Quiz | SmartPick</title>
   <meta name="description" content="Take our 6-step interactive smartphone wizard to discover your ideal phone based on your exact budget, camera, gaming, and battery requirements." />
   
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  
   <!-- CSS Stylesheets -->
   <link rel="stylesheet" href="css/dark-light.css" />
   <link rel="stylesheet" href="css/style.css" />
@@ -111,6 +114,20 @@
               <span class="quiz-option-icon">👑</span>
               <div class="quiz-option-title">Above $1,000</div>
               <div class="quiz-option-desc">Ultimate ultra flagships & foldables</div>
+            </div>
+          </div>
+
+          <!-- Custom Budget Slider Input -->
+          <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:20px; text-align:center; margin-top:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-weight:600; font-size:0.9rem; color:var(--text-secondary);">Or set a custom max budget:</span>
+              <span id="customBudgetDisplay" style="font-family:var(--font-mono); font-weight:800; color:var(--primary); font-size:1.1rem;">$400</span>
+            </div>
+            <input type="range" id="customBudgetSlider" min="150" max="2000" step="50" value="400" style="width:100%; accent-color:var(--primary); cursor:pointer;" />
+            <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); margin-top:4px;">
+              <span>$150</span>
+              <span>$1,000</span>
+              <span>$2,000+</span>
             </div>
           </div>
         </div>

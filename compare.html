@@ -6,6 +6,9 @@
   <title>Side-by-Side Smartphone Comparator | SmartPick</title>
   <meta name="description" content="Compare up to 3 smartphones side by side with automated spec winner highlighting, overall score benchmark, and best-value ratios." />
   
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  
   <!-- CSS Stylesheets -->
   <link rel="stylesheet" href="css/dark-light.css" />
   <link rel="stylesheet" href="css/style.css" />
@@ -74,8 +77,12 @@
 
         <div class="btn-print-hide" style="display:flex; gap:10px; flex-wrap:wrap;">
           <button id="shareCompareBtn" class="btn btn-secondary btn-sm">
-            <span>Share Comparison</span>
+            <span>Share Link</span>
             <span>🔗</span>
+          </button>
+          <button id="emailCompareBtn" class="btn btn-secondary btn-sm">
+            <span>Email Comparison</span>
+            <span>📧</span>
           </button>
           <button id="printCompareBtn" class="btn btn-secondary btn-sm">
             <span>Print / PDF Export</span>
@@ -90,6 +97,16 @@
       <!-- Spec Comparison Table Area -->
       <div id="compareTableContainer">
         <!-- Dynamically rendered via js/compare.js -->
+      </div>
+
+      <!-- Multi-Device Radar Chart Comparison -->
+      <div class="btn-print-hide" style="margin-top:40px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:32px; text-align:center;">
+        <div style="margin-bottom:20px; text-align:left;">
+          <span class="section-badge">📊 Multi-Phone Radar Showdown</span>
+          <h3 style="margin-top:4px;">Comparative Strength Overlay</h3>
+          <p style="font-size:0.9rem; color:var(--text-secondary); margin-top:4px;">Visualizing performance, camera, battery, display, and value balance across all selected smartphones.</p>
+        </div>
+        <canvas id="compareRadarCanvas" style="width:100%; max-width:550px; height:320px; margin:0 auto;"></canvas>
       </div>
 
     </div>
