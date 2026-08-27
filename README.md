@@ -2,6 +2,11 @@
 
 > A modern, responsive web application designed to help users find the perfect smartphone based on their custom requirements and track live multi-store prices.
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-6c63ff?style=for-the-badge&logo=vercel&logoColor=white)](https://smart-pick-nine.vercel.app/)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-00d4ff?style=for-the-badge&logo=github&logoColor=white)](https://github.com/WARRIORXR/SmartPick)
+
+🌐 **Live Website**: [https://smart-pick-nine.vercel.app/](https://smart-pick-nine.vercel.app/)
+
 ![SmartPick Banner](https://picsum.photos/seed/smartpickpreview/1200/500)
 
 ---
