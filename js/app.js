@@ -591,6 +591,74 @@ function initPhoneDetailPage() {
     `;
   }
 
+  // Ratings Breakdown Bars (camera / battery / performance / display / value)
+  const ratingsBreakdownEl = document.getElementById('detailRatingsBreakdown');
+  if (ratingsBreakdownEl && phone.ratings) {
+    const ratingMeta = [
+      { key: 'camera', icon: '📷', label: 'Camera' },
+      { key: 'battery', icon: '🔋', label: 'Battery' },
+      { key: 'performance', icon: '⚡', label: 'Performance' },
+      { key: 'display', icon: '📱', label: 'Display' },
+      { key: 'value', icon: '💎', label: 'Value for Money' }
+    ];
+    ratingsBreakdownEl.innerHTML = ratingMeta.map(meta => {
+      const val = phone.ratings[meta.key] || 0;
+      const pct = (val / 5.0) * 100;
+      const color = val >= 4.5 ? 'var(--success)' : val >= 4.0 ? 'var(--primary)' : val >= 3.5 ? 'var(--warning)' : 'var(--danger)';
+      return `
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span style="width:150px; font-size:0.88rem; color:var(--text-secondary);">${meta.icon} ${meta.label}</span>
+          <div style="flex:1; height:8px; background:var(--bg-secondary); border-radius:99px; overflow:hidden;">
+            <div style="width:${pct}%; height:100%; background:${color}; border-radius:99px; transition:width 0.6s ease;"></div>
+          </div>
+          <span style="width:34px; text-align:right; font-weight:800; font-family:var(--font-mono); color:var(--text-primary);">${val.toFixed ? val.toFixed(1) : val}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Benchmark Performance Strip (AnTuTu / Geekbench / GPU)
+  const benchmarkEl = document.getElementById('detailBenchmarks');
+  if (benchmarkEl) {
+    const b = phone.benchmarks;
+    if (b && (b.antutu || b.geekbenchSingle)) {
+      const maxAntutu = Math.max(...PHONES_DATA.map(p => (p.benchmarks && p.benchmarks.antutu) || 0)) || b.antutu;
+      const antutuPct = Math.max(6, Math.round((b.antutu / maxAntutu) * 100));
+      benchmarkEl.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; margin-bottom:16px;">
+          <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:14px; text-align:center;">
+            <div style="font-size:0.72rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">AnTuTu v10</div>
+            <div style="font-size:1.4rem; font-weight:800; color:var(--primary); font-family:var(--font-mono);">${(b.antutu / 1000000).toFixed(2)}M</div>
+          </div>
+          <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:14px; text-align:center;">
+            <div style="font-size:0.72rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Geekbench 6 Single</div>
+            <div style="font-size:1.4rem; font-weight:800; color:var(--secondary); font-family:var(--font-mono);">${b.geekbenchSingle ? b.geekbenchSingle.toLocaleString() : '—'}</div>
+          </div>
+          <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:14px; text-align:center;">
+            <div style="font-size:0.72rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Geekbench 6 Multi</div>
+            <div style="font-size:1.4rem; font-weight:800; color:var(--success); font-family:var(--font-mono);">${b.geekbenchMulti ? b.geekbenchMulti.toLocaleString() : '—'}</div>
+          </div>
+          <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:14px; text-align:center;">
+            <div style="font-size:0.72rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">3DMark GPU</div>
+            <div style="font-size:0.82rem; font-weight:700; color:var(--warning); font-family:var(--font-mono); padding-top:8px;">${b.gpuTest || '—'}</div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;">
+            <span>Relative to top performer in catalog (${Math.round(maxAntutu / 100000) / 10}M)</span>
+            <span style="font-weight:700; color:var(--text-primary);">${antutuPct}%</span>
+          </div>
+          <div style="height:10px; background:var(--bg-secondary); border-radius:99px; overflow:hidden;">
+            <div style="width:${antutuPct}%; height:100%; background:linear-gradient(90deg, var(--primary), var(--secondary)); border-radius:99px;"></div>
+          </div>
+        </div>
+      `;
+    } else {
+      benchmarkEl.innerHTML = `<p style="color:var(--text-muted); font-size:0.9rem; text-align:center; padding:20px 0;">Benchmark data coming soon for this model.</p>`;
+    }
+  }
+
+
   // Gallery thumbnails
   if (galleryThumbnails && phone.gallery) {
     galleryThumbnails.innerHTML = [phone.image, ...phone.gallery].map((imgUrl, idx) => `
@@ -746,16 +814,63 @@ function initPhoneDetailPage() {
         </div>
 
         <div class="spec-block" style="background:var(--bg-secondary); padding:20px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
-          <h4 style="margin-bottom:12px; color:var(--primary); display:flex; align-items:center; gap:8px;">🛡️ Build & Extra</h4>
+          <h4 style="margin-bottom:12px; color:var(--primary); display:flex; align-items:center; gap:8px;">🛡️ Security & Physical</h4>
           <p><strong>Water Resistance:</strong> ${phone.specs.features.waterResistance || 'None'}</p>
           <p><strong>Fingerprint:</strong> ${phone.specs.features.fingerprint}</p>
           <p><strong>Face ID:</strong> ${phone.specs.features.faceID ? 'Yes' : 'No'}</p>
-          <p><strong>Headphone Jack:</strong> ${phone.specs.features.headphoneJack ? '3.5mm Present' : 'None'}</p>
           <p><strong>Weight:</strong> ${phone.weight}</p>
           <p><strong>Colors:</strong> ${phone.colors.join(', ')}</p>
         </div>
+
+        <div class="spec-block" style="background:var(--bg-secondary); padding:20px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
+          <h4 style="margin-bottom:12px; color:var(--primary); display:flex; align-items:center; gap:8px;">🔊 Audio Experience</h4>
+          <div id="detailAudio">
+            <!-- Injected via audio detail renderer -->
+          </div>
+        </div>
+
+        <div class="spec-block" style="background:var(--bg-secondary); padding:20px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
+          <h4 style="margin-bottom:12px; color:var(--primary); display:flex; align-items:center; gap:8px;">🧱 Build Quality</h4>
+          <div id="detailBuild">
+            <!-- Injected via build detail renderer -->
+          </div>
+        </div>
       </div>
     `;
+  }
+
+  // Audio Experience & Build Quality blocks (run AFTER fullSpecsTable injection creates their containers)
+  const audioEl = document.getElementById('detailAudio');
+  const buildEl = document.getElementById('detailBuild');
+  if (audioEl) {
+    const a = phone.specs.audio;
+    if (a) {
+      const audioItems = [
+        { label: 'Stereo Speakers', val: a.stereoSpeakers ? '✅ Yes' : '❌ No' },
+        { label: '3.5mm Headphone Jack', val: a.headphoneJack ? '✅ Present' : '❌ None' },
+        { label: 'Hi-Res / LDAC Audio', val: a.hiResAudio ? '✅ Certified' : '— Standard' },
+        { label: 'Dolby Atmos', val: a.dolbyAtmos ? '✅ Supported' : '❌ No' }
+      ];
+      audioEl.innerHTML = `
+        ${audioItems.map(it => `<p><strong>${it.label}:</strong> ${it.val}</p>`).join('')}
+        <p><strong>Audio Experience Rating:</strong> ${renderStars(a.audioRating)} <strong>${a.audioRating}/5</strong></p>
+      `;
+    } else {
+      audioEl.closest('.spec-block').style.display = 'none';
+    }
+  }
+  if (buildEl) {
+    const bl = phone.specs.build;
+    if (bl) {
+      buildEl.innerHTML = `
+        <p><strong>Frame:</strong> ${bl.frame}</p>
+        <p><strong>Back Panel:</strong> ${bl.back}</p>
+        <p><strong>Water / Dust Rating:</strong> ${bl.ipRating}</p>
+        <p><strong>Dimensions:</strong> ${bl.dimensions}</p>
+      `;
+    } else {
+      buildEl.closest('.spec-block').style.display = 'none';
+    }
   }
 
   // Render Price History Chart

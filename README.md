@@ -15,7 +15,7 @@
 
 1. **🔍 Smart Requirement Finder (Quiz Wizard)**:
    - 6-step interactive questionnaire covering Budget, Primary Use-Case, Brand Preference, OS, Hardware Specs (RAM/Storage/Display/Battery), and Special Perks (5G, IP68, Wireless Charging, Foldables).
-   - Dynamic weighted match percentage score calculation (e.g. *98% Match for You!*).
+   - Dynamic weighted match percentage score calculation (e.g. *98% Match for You!*) across a **55-device, 13-brand catalog**.
    - Celebration confetti animation on completion.
 
 2. **💰 Multi-Store Price Checker**:
@@ -30,13 +30,15 @@
    - Interactive Add Phone modal, shareable comparison link via URL parameters, and clean Print/PDF export stylesheet.
 
 4. **🔎 Advanced Search & Filters**:
-   - Multi-criteria filter sidebar: Price range slider, Brand checkboxes (Apple, Samsung, Pixel, OnePlus, Xiaomi, Sony, Motorola, Asus, Nothing, Realme, Vivo), OS radio buttons, RAM pills, Display types, and Feature checkboxes.
+   - Multi-criteria filter sidebar: Price range slider, Brand checkboxes (Apple, Samsung, Google, OnePlus, Xiaomi, Sony, Motorola, Asus, Nothing, Realme, Vivo, Honor, Nubia), OS radio buttons, RAM pills, Display types, and Feature checkboxes.
    - Live search with instant autocomplete dropdown and **Web Speech API Voice Search** (`🎙️`).
    - Multiple sort algorithms: Price Low-to-High, High-to-Low, Rating, Newest, Most Popular, Best Value.
 
 5. **📱 Comprehensive Phone Detail Pages**:
    - High-res photo gallery with multi-view thumbnail switcher.
-   - Full technical datasheet: Display, Performance, Camera, Battery, Connectivity, and Build.
+   - Full technical datasheet: Display, Performance, Camera, Battery, Connectivity, Security, **Audio Experience** (stereo speakers, Hi-Res/LDAC, Dolby Atmos), and **Build Quality** (frame material, back panel, IP rating, dimensions).
+   - **Benchmark Score cards**: AnTuTu v10, Geekbench 6 single/multi, 3DMark GPU stress test, plus a relative-to-catalog performance bar.
+   - **Interactive Ratings Breakdown** bars for Camera, Battery, Performance, Display, and Value.
    - Editor-reviewed **Pros & Cons** analysis.
    - Similar smartphone recommendations within the same price bracket.
 
@@ -74,7 +76,7 @@ SmartPick/
 │
 ├── js/
 │   ├── data/
-│   │   └── phones.js       ← Complete database with 30 smartphones
+│   │   └── phones.js       ← Complete database with 55 smartphones across 13 brands
 │   ├── finder.js           ← Quiz wizard logic & weighted match score
 │   ├── compare.js          ← Side-by-side comparison & winner evaluation
 │   ├── filters.js          ← Search, fuzzy matching & multi-attribute filters
